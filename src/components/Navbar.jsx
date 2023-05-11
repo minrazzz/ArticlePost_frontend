@@ -29,9 +29,9 @@ function Navbar() {
       <div className="links flex justify-end flex gap-x-4 items-center px-2">
         <Link
           className="hover:font-bold hover:transition-all dark:text-white"
-          to="/register1"
+          to="/signup"
         >
-          Register
+          Signup
         </Link>
         <Link
           className="hover:font-bold hover:transition-all dark:text-white"
@@ -45,11 +45,11 @@ function Navbar() {
               className="icon cursor-pointer dark:text-white"
               onClick={handleTheme}
             >
-              <i class="fa-solid fa-sun"></i>
+              <i className="fa-solid fa-sun"></i>
             </div>
           ) : (
             <div className="icon cursor-pointer on" onClick={handleTheme}>
-              <i class="fa-solid fa-moon"></i>
+              <i className="fa-solid fa-moon"></i>
             </div>
           )}
         </div>

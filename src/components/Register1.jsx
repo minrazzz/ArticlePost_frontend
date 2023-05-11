@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import TextError from "./TextError";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const BASE_URL = "http://localhost:8000/user";
 
 const initialValues = {
   name: "",
@@ -9,42 +13,44 @@ const initialValues = {
   password: "",
 };
 
-const onSubmit = (values) => {
-  console.log("form data", values);
-};
-
-// const validate = (values) => {
-
-//   let errors = {};
-//   if (!values.name) {
-//     errors.name = "required";
-//   }
-
-//   if (!values.email) {
-//     errors.email = "required";
-//   } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-//     errors.email = "Invalid email address";
-//   }
-
-//   if (!values.password) {
-//     errors.password = "required";
-//   }
-
-//   return errors;
-// };
-
-const validationSchema = Yup.object({
-  name: Yup.string().required("required!!"),
-  email: Yup.string().email("Invalid Email Format!!").required("required!!"),
-  password: Yup.string().required("required!!"),
-});
-
 function Register1() {
+  const validationSchema = Yup.object({
+    name: Yup.string().required("required!!"),
+    email: Yup.string().email("inavlid email!!").required("required!!"),
+
+    password: Yup.string().required("required!!"),
+  });
+  const [Error, setError] = useState(null);
+  const navigate = useNavigate();
+
   return (
     <Formik
+      // disable on every keystroke
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={onSubmit}
+      // validateOnChange={false}
+
+      async
+      onSubmit={async (data, { setSubmitting }) => {
+        let formData = new FormData();
+        formData.append("name", data.name);
+        formData.append("email", data.email);
+        formData.append("password", data.password);
+        const response = await axios({
+          method: "POST",
+          url: BASE_URL + "/add ",
+          data: formData,
+        });
+        console.log(response.data);
+
+        const datas = response.data;
+        if (!datas.success) {
+          setError(datas.message);
+          return false;
+        }
+        alert("Successfully registered!!");
+        navigate("/login");
+      }}
     >
       <Form className="mx-auto max-w-sm pt-9 mt-5" action="">
         <h1 className="text-3xl font-bold text-center mb-5 dark:text-white py-3">
@@ -64,6 +70,8 @@ function Register1() {
 
         <div className="form-control">
           <ErrorMessage name="email" component={TextError} />
+          {Error ? Error : ""}
+
           <Field
             className="block w-full py-2 mb-5 outline-none bg-yellow-300 rounded-md px-2 shadow-md dark:bg-white"
             type="text"
@@ -80,6 +88,10 @@ function Register1() {
             placeholder="Password"
             name="password"
           />
+        </div>
+
+        <div className="error-box">
+          <p className="text-red-500 font-semibold text-sm"></p>
         </div>
 
         <div className="grid place-items-center">
