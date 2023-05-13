@@ -21,7 +21,6 @@ const Signup = () => {
         setError("All fields are required!!!");
         return false;
       }
-      console.log(key);
     }
 
     const response = await axios({
@@ -33,9 +32,9 @@ const Signup = () => {
     const data = response.data;
     if (!data.success) {
       setError(data.message);
-      console.log(response.data.success);
       return false;
     }
+
     navigate("/login");
   };
 

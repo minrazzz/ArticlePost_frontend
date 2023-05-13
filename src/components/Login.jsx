@@ -15,7 +15,7 @@ function Login() {
   });
 
   onsubmit = (values) => {
-    console.log("form data", values);
+    // console.log("form data", values);
   };
 
   return (
