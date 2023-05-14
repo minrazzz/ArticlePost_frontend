@@ -1,11 +1,14 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
+import { UserContext } from "../contexts/UserContext";
+
 const API = "http://localhost:8000/profile_info";
 
 function Navbar() {
-  const [user, setUser] = useState(null);
+  const { profile, setProfile } = useContext(UserContext);
+
   const [token, setToken] = useState(Cookies.get("auth") ?? null);
   const [theme, setTheme] = useState(
     localStorage.getItem("mernTheme") ?? "light"
@@ -25,9 +28,10 @@ function Navbar() {
       });
       const data = response.data;
       if (data.success) {
-        setUser(data.data);
+        setProfile(data.data);
       }
-      console.log(response);
+      console.log(data.data);
+      setProfile(null);
     };
     getUser();
   }, []);
@@ -53,19 +57,41 @@ function Navbar() {
         </Link>
       </div>
       <div className="links flex justify-end flex gap-x-4 items-center px-2">
-        {user ? "sdfdsf" : "no"}
-        <Link
-          className="hover:font-bold hover:transition-all dark:text-white"
-          to="/signup"
-        >
-          Signup
-        </Link>
-        <Link
-          className="hover:font-bold hover:transition-all dark:text-white"
-          to="/login"
-        >
-          Login
-        </Link>
+        {profile === "loading" && ""}
+
+        {!profile && (
+          <>
+            <Link
+              className="hover:font-bold hover:transition-all dark:text-white"
+              to="/signup"
+            >
+              Signup
+            </Link>
+            <Link
+              className="hover:font-bold hover:transition-all dark:text-white"
+              to="/login"
+            >
+              Login
+            </Link>
+          </>
+        )}
+        {profile && profile !== "loading" && (
+          <>
+            <Link
+              className="hover:font-bold hover:transition-all dark:text-white"
+              to="/create-article"
+            >
+              Create Article
+            </Link>
+            <Link
+              className="hover:font-bold hover:transition-all dark:text-white"
+              to="#"
+            >
+              Logout
+            </Link>
+          </>
+        )}
+
         <div className="icons">
           {theme === "dark" ? (
             <div

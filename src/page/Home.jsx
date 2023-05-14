@@ -1,13 +1,15 @@
 import React from "react";
-import Post from "./Post";
+
+// import Post from "./Post";
+import Article from "./Article";
 
 function Home() {
   return (
     <div>
-      <Post />
-      <Post />
-      <Post />
-      <Post />
+      <Article />
+      <Article />
+      <Article />
+      <Article />
     </div>
   );
 }
