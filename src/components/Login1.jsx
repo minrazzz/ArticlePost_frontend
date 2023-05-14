@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../contexts/UserContext";
 const API = "http://localhost:8000/user";
 
 const Login1 = () => {
+  const { setProfile } = useContext(UserContext);
   const [input, setInput] = useState({
     email: "",
     password: "",
   });
   const [error, setError] = useState(null);
+  const [passwordPreview, setPasswordPreview] = useState(false);
+
   const navigate = useNavigate();
 
   const loginUser = async (e) => {
@@ -27,11 +31,19 @@ const Login1 = () => {
 
     // console.log(response);
     const data = response.data;
+
     if (!data.success) {
       setError(data.message);
       return false;
     }
-    navigate("/home");
+
+    setProfile({
+      user_id: data.data.user_id,
+      name: data.data.name,
+      email: data.data.email,
+    });
+
+    navigate("/");
   };
 
   return (
@@ -52,19 +64,32 @@ const Login1 = () => {
           }))
         }
       />
-      <input
-        className="block w-full py-2 mb-5 outline-none bg-yellow-300 rounded-md px-2 shadow-md dark:bg-white"
-        type="text"
-        placeholder="password"
-        name="password"
-        value={input.password}
-        onChange={(e) =>
-          setInput((prev) => ({
-            email: prev.email,
-            password: e.target.value,
-          }))
-        }
-      />
+      <div className="input-box relative">
+        <input
+          className="block w-full py-2 mb-5 outline-none bg-yellow-300 rounded-md px-2 shadow-md dark:bg-white"
+          type="text"
+          placeholder="password"
+          name="password"
+          value={input.password}
+          onChange={(e) =>
+            setInput((prev) => ({
+              email: prev.email,
+              password: e.target.value,
+            }))
+          }
+        />
+        <div
+          className="icon absolute top-[7px] right-[8px] cursor-pointer"
+          onClick={() => setPasswordPreview(!passwordPreview)}
+        >
+          {passwordPreview ? (
+            <i class="fa-solid fa-eye text-sm"></i>
+          ) : (
+            <i class="fa-solid fa-eye-slash text-sm"></i>
+          )}
+        </div>
+      </div>
+
       <div className="erro-box ">
         <p className="text-red-500 font-semibold text-sm">
           {error ? error : ""}
