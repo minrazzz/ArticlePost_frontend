@@ -9,6 +9,7 @@ import Signup from "./components/Signup";
 
 import { UserContextProvider } from "./contexts/UserContext";
 import CreateArticle from "./page/CreateArticle";
+import ArticleView from "./page/ArticleView";
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/login" element={<Login1 />} />
                 <Route path="/create-article" element={<CreateArticle />} />
-
+                <Route path="/article/:id" element={<ArticleView />} />
                 <Route path="/home" element={<Home />} />
               </Route>
             </Routes>

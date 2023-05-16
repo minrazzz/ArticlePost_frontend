@@ -2,8 +2,39 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const API = "http://localhost:8000/article/add";
+
+const modules = {
+  toolbar: [
+    [{ header: [1, 2, false] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+    ["link", "image"],
+    ["clean"],
+  ],
+};
+
+const formats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "indent",
+  "link",
+  "image",
+];
 
 const CreateArticle = () => {
   const [input, setInput] = useState({
@@ -65,7 +96,7 @@ const CreateArticle = () => {
           type="text"
           name="title"
           placeholder="Title"
-          className=" block w-[100%] outline-none py-2 px-2 rounded-md mb-3 bg-yellow-300"
+          className=" block w-[100%] outline-none py-2 px-2 rounded-md mb-3 bg-yellow-300 dark:bg-slate-200"
           value={input.title}
           onChange={(e) =>
             setInput((prev) => ({
@@ -78,24 +109,9 @@ const CreateArticle = () => {
         />
         <input
           type="text"
-          name="description"
-          placeholder="Description"
-          className="block w-full outline-none py-6 px-2 rounded-md mb-3 shadow-sm bg-yellow-300"
-          value={input.description}
-          onChange={(e) =>
-            setInput((prev) => ({
-              title: prev.title,
-              description: e.target.value,
-              author: prev.author,
-              image: prev.image,
-            }))
-          }
-        />
-        <input
-          type="text"
           name="author"
           placeholder="Author"
-          className=" block w-[100%] outline-none py-2 px-2 rounded-md mb-3 bg-yellow-300"
+          className=" block w-[100%] outline-none py-2 px-2 rounded-md mb-3 bg-yellow-300 dark:bg-slate-200"
           value={input.author}
           onChange={(e) =>
             setInput((prev) => ({
@@ -110,13 +126,28 @@ const CreateArticle = () => {
           type="file"
           name="image"
           placeholder="Image"
-          className="block w-full outline-none py-2 px-2 rounded-md mb-3 bg-yellow-300"
+          className="block w-full outline-none py-2 px-2 rounded-md mb-3 bg-yellow-300 dark:bg-slate-200"
           onChange={(e) =>
             setInput((prev) => ({
               title: prev.title,
               description: prev.description,
               author: prev.author,
               image: e.target.files[0],
+            }))
+          }
+        />
+
+        <ReactQuill
+          theme="snow"
+          modules={modules}
+          formats={formats}
+          value={input.description}
+          onChange={(value) =>
+            setInput((prev) => ({
+              title: prev.title,
+              description: value,
+              author: prev.author,
+              image: prev.image,
             }))
           }
         />
@@ -128,7 +159,7 @@ const CreateArticle = () => {
         </div>
         <div className="grid place-items-center  ">
           <button
-            className="py-1 bg-yellow-300 w-1/4 rounded-md shadow-md hover:bg-yellow-400 dark:bg-[#ced6e0]"
+            className="py-1 bg-yellow-300 w-1/4 rounded-md shadow-md hover:bg-yellow-400 dark:bg-[#ced6e0] mt-4"
             type="submit"
           >
             submit

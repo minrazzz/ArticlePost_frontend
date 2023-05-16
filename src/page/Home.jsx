@@ -9,6 +9,7 @@ const API = "http://localhost:8000/article";
 
 const Home = () => {
   const [articles, setArticles] = useState([]);
+  // console.log(articles);
   useEffect(() => {
     const getArticle = async () => {
       const response = await axios({
