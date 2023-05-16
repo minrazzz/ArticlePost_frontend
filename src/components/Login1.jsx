@@ -17,11 +17,13 @@ const Login1 = () => {
 
   const loginUser = async (e) => {
     e.preventDefault();
+
     for (const key in input) {
       if (input[key] === "") {
         setError("All fields are required!!");
       }
     }
+
     const response = await axios({
       method: "post",
       url: API + "/login",

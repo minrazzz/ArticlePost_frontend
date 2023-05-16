@@ -1,12 +1,13 @@
 import axios from "axios";
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { UserContext } from "../contexts/UserContext";
 
 const API = "http://localhost:8000/profile_info";
 
-function Navbar() {
+const Navbar = () => {
+  const navigate = useNavigate();
   const { profile, setProfile } = useContext(UserContext);
 
   const [token, setToken] = useState(Cookies.get("auth") ?? null);
@@ -29,8 +30,9 @@ function Navbar() {
       const data = response.data;
       if (data.success) {
         setProfile(data.data);
+        // console.log(data.data);
       }
-      console.log(data.data);
+
       setProfile(null);
     };
     getUser();
@@ -51,7 +53,9 @@ function Navbar() {
 
   const logOut = () => {
     Cookies.remove("auth");
+
     setProfile(null);
+    navigate("/");
   };
 
   return (
@@ -115,6 +119,6 @@ function Navbar() {
       </div>
     </div>
   );
-}
+};
 
 export default Navbar;
