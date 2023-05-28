@@ -85,9 +85,9 @@ const Login1 = () => {
           onClick={() => setPasswordPreview(!passwordPreview)}
         >
           {passwordPreview ? (
-            <i class="fa-solid fa-eye text-sm"></i>
+            <i className="fa-solid fa-eye text-sm"></i>
           ) : (
-            <i class="fa-solid fa-eye-slash text-sm"></i>
+            <i className="fa-solid fa-eye-slash text-sm"></i>
           )}
         </div>
       </div>

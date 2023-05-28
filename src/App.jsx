@@ -10,6 +10,7 @@ import Signup from "./components/Signup";
 import { UserContextProvider } from "./contexts/UserContext";
 import CreateArticle from "./page/CreateArticle";
 import ArticleView from "./page/ArticleView";
+import EditArticle from "./page/EditArticle";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
                 <Route path="/login" element={<Login1 />} />
                 <Route path="/create-article" element={<CreateArticle />} />
                 <Route path="/article/:id" element={<ArticleView />} />
+                <Route path="/edit-article/:id" element={<EditArticle />} />
                 <Route path="/home" element={<Home />} />
               </Route>
             </Routes>

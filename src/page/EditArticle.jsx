@@ -1,12 +1,12 @@
 import axios from "axios";
 
-import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { UserContext } from "../contexts/UserContext";
 
-const API = "http://localhost:8000/article/add";
+const API = "http://localhost:8000/";
 
 const modules = {
   toolbar: [
@@ -37,9 +37,10 @@ const formats = [
   "image",
 ];
 
-const CreateArticle = () => {
+const EditArticle = () => {
+  const param = useParams();
   const { profile } = useContext(UserContext);
-  // console.log(profile);
+
   const [input, setInput] = useState({
     title: "",
 
@@ -48,11 +49,41 @@ const CreateArticle = () => {
     image: "",
   });
 
+  const [preview, setPreview] = useState(null);
+
   const [error, setError] = useState(null);
   // console.log(profile);
   const navigate = useNavigate();
 
-  const postArticle = async (e) => {
+  // useEffect(() => {
+  //   if (input.image) {
+  //     const objectUrl = URL.createObjectURL(input.image);
+  //     setPreview(objectUrl);
+  //     return () => URL.revokeObjectURL(objectUrl);
+  //   }
+  // }, [input.image]);
+
+  useEffect(() => {
+    const getSingleArticle = async () => {
+      const response = await axios({
+        method: "get",
+        url: API + "article/" + param.id,
+        withCredentials: "true",
+      });
+      const data = response.data.data;
+      // console.log(response.data);
+      setInput({
+        title: data.title,
+
+        introduction: data.introduction,
+        description: data.description,
+        image: data.image,
+      });
+    };
+    getSingleArticle();
+  }, []);
+
+  const editArticle = async (e) => {
     e.preventDefault();
     for (const key in input) {
       if (input[key] === "") {
@@ -70,8 +101,8 @@ const CreateArticle = () => {
     formData.append("image", input.image);
 
     const response = await axios({
-      method: "post",
-      url: API,
+      method: "put",
+      url: API + "article/edit/" + param.id,
       data: formData,
       withCredentials: true,
       headers: {
@@ -81,7 +112,7 @@ const CreateArticle = () => {
     });
 
     const data = response.data;
-    console.log(data);
+    // console.log(data);
     if (!data.success) {
       setError(data.message);
       false;
@@ -95,10 +126,10 @@ const CreateArticle = () => {
       <form
         action=""
         className="pt-[50px] max-w-xl mx-auto "
-        onSubmit={postArticle}
+        onSubmit={editArticle}
       >
         <h1 className="text-center text-2xl dark:text-white mb-2 font-lilita dark:text-white">
-          Create Article
+          Edit Article
         </h1>
         <input
           type="text"
@@ -156,7 +187,7 @@ const CreateArticle = () => {
           name="image"
           placeholder="Image"
           className="block w-full outline-none py-2 px-2 rounded-md mb-3 bg-yellow-300 dark:bg-slate-200"
-          onChange={(e) =>
+          onChange={(e) => {
             setInput((prev) => ({
               title: prev.title,
               author: prev.author,
@@ -165,9 +196,19 @@ const CreateArticle = () => {
               description: prev.description,
 
               image: e.target.files[0],
-            }))
-          }
+            }));
+            const objectUrl = URL.createObjectURL(e.target.files[0]);
+            setPreview(objectUrl);
+          }}
         />
+        <div className="image-preview grid items-center justify-center mb-3">
+          {console.log(preview)}
+          <img
+            className="max-h-[200px]"
+            src={preview ?? `${API}${input.image}`}
+            alt=""
+          />
+        </div>
 
         <ReactQuill
           theme="snow"
@@ -186,7 +227,7 @@ const CreateArticle = () => {
           }
         />
 
-        <div className="erro-box ">
+        <div className="error-box ">
           <p className="text-red-500 font-semibold text-sm">
             {error ? error : ""}
           </p>
@@ -204,4 +245,4 @@ const CreateArticle = () => {
   );
 };
 
-export default CreateArticle;
+export default EditArticle;

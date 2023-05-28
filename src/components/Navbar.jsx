@@ -31,9 +31,9 @@ const Navbar = () => {
       if (data.success) {
         setProfile(data.data);
         // console.log(data.data);
+      } else {
+        setProfile(null);
       }
-
-      setProfile(null);
     };
     getUser();
   }, []);
@@ -55,7 +55,7 @@ const Navbar = () => {
     Cookies.remove("auth");
 
     setProfile(null);
-    navigate("/");
+    navigate("/home");
   };
 
   return (
@@ -92,13 +92,12 @@ const Navbar = () => {
             >
               Create Article
             </Link>
-            <Link
+            <button
               className="hover:font-bold hover:transition-all dark:text-white"
-              to="#"
               onClick={() => logOut()}
             >
               Logout
-            </Link>
+            </button>
           </>
         )}
 

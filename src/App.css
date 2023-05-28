@@ -4,5 +4,12 @@
 
 body {
   overflow-x: hidden;
-  overflow-y: auto;
+}
+.ql-toolbar.ql-snow {
+  background-color: #fde047;
+}
+
+.ql-editor {
+  min-height: 250px;
+  background-color: #efefef;
 }

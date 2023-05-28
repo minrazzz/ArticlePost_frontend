@@ -1,12 +1,18 @@
 import axios from "axios";
-import React from "react";
+import React, { useContext } from "react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import moment from "moment";
+import { UserContext } from "../contexts/UserContext";
 const API = "http://localhost:8000/";
 
 const ArticleView = () => {
+  const { profile } = useContext(UserContext);
   const [article, setArticle] = useState(null);
+  // console.log(profile);
+  // console.log(article);
   const param = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getSingleArticle = async () => {
@@ -16,13 +22,24 @@ const ArticleView = () => {
         withCredentials: "true",
       });
       const data = response.data;
-      console.log(response);
+      // console.log(response);
       setArticle(data.data);
-      console.log(data);
     };
     getSingleArticle();
   }, []);
   if (!article) return null;
+
+  const deleteArticles = async () => {
+    const response = await axios({
+      method: "delete",
+      url: API + "article/delete/" + param.id,
+      withCredentials: "true",
+    });
+    const data = response.data;
+    if (data.success) {
+      navigate("/");
+    }
+  };
 
   return (
     <div className="mx-auto ">
@@ -31,15 +48,51 @@ const ArticleView = () => {
           {article ? article.title : ""}
         </h1>
       </div>
-      <div className="image mb-4 mx-auto object-cover">
+
+      <div className="date flex justify-between items-center">
+        <p className="text-center   text-md font-semibold text-[#7f7f7f] ">
+          <span className=" pr-2 uppercase">{article.author}</span>:
+          <span className="pl-2">
+            {moment(article.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
+          </span>
+        </p>
+        {profile?.user_id === article?.author_id && (
+          <div className="action  flex gap-x-2 cursor-pointer pb-2  ">
+            <Link
+              to={`/edit-article/${article._id}`}
+              className="min-w-[75px] bg-[#2980b9] px-6 py-1 rounded-md text-white shadow-sm font-semibold hover:bg-[#1f6a8a] dark:bg-slate-700 dark:hover:bg-slate-600"
+            >
+              <i className="fa-regular fa-pen-to-square mr-1"></i>
+              Edit
+            </Link>
+            <Link
+              to=""
+              className="min-w-[80px] bg-red-500 px-4 py-1 rounded-md text-white shadow-sm font-semibold hover:bg-red-700 dark:hover:bg-red-600"
+              onClick={() => {
+                window.confirm("Are you sure") ? deleteArticles() : "";
+              }}
+            >
+              <i className="fa-solid fa-trash-can mr-1"></i>
+              Delete
+            </Link>
+          </div>
+        )}
+      </div>
+
+      <div className="image mb-4 mx-auto  ">
         <img
           src={API + article.image}
           alt="post"
-          className=" mx-auto max-h-[450px]"
+          className=" mx-auto max-h-[700px]   object-contain shadow-md  "
         />
       </div>
+      <div className="introduction dark:text-white text-lg font-semibold">
+        <p>{article.introduction}</p>
+        <hr className="border-[#767676] my-3" />
+      </div>
       <div className="description text-lg dark:text-white ">
-        <p>{article.description}</p>
+        <div dangerouslySetInnerHTML={{ __html: article.description }}></div>
+        {/* to set string format to html format used in quill*/}
       </div>
     </div>
   );
