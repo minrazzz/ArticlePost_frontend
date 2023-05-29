@@ -38,6 +38,7 @@ const formats = [
 ];
 
 const CreateArticle = () => {
+  const [preview, setPreview] = useState(null);
   const { profile } = useContext(UserContext);
   // console.log(profile);
   const [input, setInput] = useState({
@@ -81,7 +82,7 @@ const CreateArticle = () => {
     });
 
     const data = response.data;
-    console.log(data);
+    // console.log(data);
     if (!data.success) {
       setError(data.message);
       false;
@@ -89,6 +90,11 @@ const CreateArticle = () => {
 
     navigate("/");
   };
+
+  if (profile === "loading") return "";
+  if (!profile) {
+    navigate("/login");
+  }
 
   return (
     <>
@@ -156,7 +162,7 @@ const CreateArticle = () => {
           name="image"
           placeholder="Image"
           className="block w-full outline-none py-2 px-2 rounded-md mb-3 bg-yellow-300 dark:bg-slate-200"
-          onChange={(e) =>
+          onChange={(e) => {
             setInput((prev) => ({
               title: prev.title,
               author: prev.author,
@@ -165,9 +171,21 @@ const CreateArticle = () => {
               description: prev.description,
 
               image: e.target.files[0],
-            }))
-          }
+            }));
+            const objectUrl = URL.createObjectURL(e.target.files[0]);
+            setPreview(objectUrl);
+          }}
         />
+        {preview && (
+          <div className="image-preview grid items-center justify-center mb-3">
+            {console.log(preview)}
+            <img
+              className="max-h-[200px]"
+              src={preview ?? `${API}${input.image}`}
+              alt=""
+            />
+          </div>
+        )}
 
         <ReactQuill
           theme="snow"

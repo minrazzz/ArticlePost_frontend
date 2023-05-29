@@ -69,7 +69,7 @@ const Login1 = () => {
       <div className="input-box relative">
         <input
           className="block w-full py-2 mb-5 outline-none bg-yellow-300 rounded-md px-2 shadow-md dark:bg-white"
-          type="text"
+          type={passwordPreview ? "text" : "password"}
           placeholder="password"
           name="password"
           value={input.password}
