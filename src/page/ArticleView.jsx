@@ -10,6 +10,8 @@ const API = "http://localhost:8000/";
 const ArticleView = () => {
   const { profile } = useContext(UserContext);
   const [article, setArticle] = useState(null);
+  const [comments, setComments] = useState(null);
+  const [inputComments, setInputComments] = useState("");
   // console.log(profile);
   // console.log(article);
   const param = useParams();
@@ -23,7 +25,7 @@ const ArticleView = () => {
         withCredentials: "true",
       });
       const data = response.data;
-      console.log(response);
+      // console.log(data);
       setArticle(data.data);
     };
     const addViews = async () => {
@@ -33,10 +35,23 @@ const ArticleView = () => {
         withCredentials: "true",
       });
       const data = response.data;
-      console.log(data);
+      // console.log(data);
     };
+
+    const getComments = async () => {
+      const response = await axios({
+        method: "get",
+        url: API + "comments/get/" + param.id,
+        withCredentials: "true",
+      });
+      const data = response.data;
+      console.log(data);
+      setComments(data.data);
+    };
+
     getSingleArticle();
     addViews();
+    getComments();
   }, []);
   if (!article) return null;
 
@@ -50,6 +65,21 @@ const ArticleView = () => {
     if (data.success) {
       navigate("/");
     }
+  };
+
+  const postComments = async (e) => {
+    e.preventDefault();
+    const response = await axios({
+      method: "post",
+      url: API + "comments/add",
+      data: {
+        article_id: param.id,
+        comments: inputComments,
+      },
+      withCredentials: "true",
+    });
+    const data = response.data;
+    // console.log(data);
   };
 
   return (
@@ -115,13 +145,18 @@ const ArticleView = () => {
           <h1 className="text-2xl font-bold dark:text-white">Comments</h1>
         </div>
 
-        <div className="input-box mb-5 ">
+        <form className="input-box mb-5 " onSubmit={postComments}>
           <textarea
             className="w-full bg-[#ffffff] rounded-md shadow-sm min-h-[80px] outline-none px-2 py-1 text-sm dark:bg-[#121e3a] dark:text-white"
             placeholder="Write your comment..."
+            onChange={(e) => setInputComments(e.target.value)}
+            value={inputComments}
           ></textarea>
           <div className="flex justify-end items-center ">
-            <button className=" flex items-center px-1 py-1 bg-[#2980B9] text-white rounded-md dark:bg-[#475569] hover:bg-[#1f6a8a] ">
+            <button
+              className=" flex items-center px-1 py-1 bg-[#2980B9] text-white rounded-md dark:bg-[#475569] hover:bg-[#1f6a8a] "
+              type="submit"
+            >
               Send{" "}
               <i
                 className=" fa-solid fa-paper-plane  text-sm"
@@ -129,12 +164,15 @@ const ArticleView = () => {
               ></i>
             </button>
           </div>
-        </div>
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
+        </form>
+
+        {!comments
+          ? "loading"
+          : comments.length <= 0
+          ? "comments not found"
+          : comments.map((comment, index) => (
+              <Comment key={index} {...comment} />
+            ))}
       </div>
     </div>
   );
